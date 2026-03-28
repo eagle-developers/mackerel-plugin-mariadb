@@ -1004,8 +1004,15 @@ func parseInnodbStatus(str string, p map[string]float64) {
 			continue
 		}
 		if strings.Index(line, "Pending flushes (fsync)") == 0 {
-			setMap(p, "pending_log_flushes", record[4])
-			setMap(p, "pending_buf_pool_flushes", record[7])
+			if len(record) >= 8 {
+				// MariaDB 10.3 / MySQL: "Pending flushes (fsync) log: 0; buffer pool: 0"
+				setMap(p, "pending_log_flushes", record[4])
+				setMap(p, "pending_buf_pool_flushes", record[7])
+			} else if len(record) >= 4 {
+				// MariaDB 10.11+: "Pending flushes (fsync): 0"
+				setMap(p, "pending_log_flushes", record[3])
+				setMap(p, "pending_buf_pool_flushes", record[3])
+			}
 			continue
 		}
 
