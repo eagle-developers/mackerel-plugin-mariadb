@@ -14,6 +14,6 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
 release:
   github:
-    owner: mackerelio
-    name: mackerel-plugin-mysql
+    owner: eagle-developers
+    name: mackerel-plugin-mariadb
 
