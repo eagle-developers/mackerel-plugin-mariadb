@@ -1,6 +1,6 @@
 version: 2
 builds:
-  - binary: mackerel-plugin-mysql
+  - binary: mackerel-plugin-mariadb
     env:
       - CGO_ENABLED=0
     goos:

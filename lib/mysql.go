@@ -359,9 +359,22 @@ func (m *MySQLPlugin) fetchProcesslist(db *sql.DB, stat map[string]float64) erro
 		stat[k] = 0
 	}
 
+	cols, err := rows.Columns()
+	if err != nil {
+		return fmt.Errorf("FetchMetrics (Processlist): %w", err)
+	}
+
 	for rows.Next() {
 		var rawState *string
-		if err := rows.Scan(trashScanner{}, trashScanner{}, trashScanner{}, trashScanner{}, trashScanner{}, trashScanner{}, &rawState, trashScanner{}); err != nil {
+		scanArgs := make([]interface{}, len(cols))
+		for i := range scanArgs {
+			if i == 6 { // State column
+				scanArgs[i] = &rawState
+			} else {
+				scanArgs[i] = trashScanner{}
+			}
+		}
+		if err := rows.Scan(scanArgs...); err != nil {
 			return fmt.Errorf("FetchMetrics (Processlist): %w", err)
 		}
 		var state string
